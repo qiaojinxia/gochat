@@ -40,7 +40,7 @@ func PostChatStreamMsgHandler(c *gin.Context) {
 	token := c.Param("token")
 
 	if chatMsg.APIKey == "" {
-		chatMsg.APIKey = conf.DefaultKey
+		chatMsg.APIKey = conf.DefaultOpenAIKey
 	}
 	if chatMsg.SystemRole == "" {
 		chatMsg.SystemRole = conf.DefaultRole
@@ -120,7 +120,7 @@ func SendMessage(c *gin.Context) {
 	systemRole, _ := c.GetPostForm("systemRole")
 	apiKey, _ := c.GetPostForm("apiKey")
 	if apiKey == "" {
-		apiKey = conf.DefaultKey
+		apiKey = conf.DefaultOpenAIKey
 	}
 	if systemRole == "" {
 		systemRole = conf.DefaultRole
