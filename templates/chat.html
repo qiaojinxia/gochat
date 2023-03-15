@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--自适应屏幕大小-->
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="使用官方ChatGPT API实现简单HTML网页版在线聊天（支持markdown语法及查看对话记录）"/>
+<head>
+    <meta charset="UTF-8">
+    <title>OpenAI</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <script src="/static/js/marked.min.js" ></script>
+</head>
+
+<body>
+<div align="center">
+    <!-- 添加用户名输入框 -->
+    <div class="chat_window">
+        <div class="top_menu">
+            <div class="buttons">
+                <div class="button close"></div>
+                <div class="button minimize"></div>
+                <div class="button maximize"></div>
+            </div>
+            <div class="title" id ="tt"><input type='text' id='username' placeholder='请输入您的用户名'/></div>
+            <div id="loading" style="display:none; color:#171717"><b>对方正在输入……</b></div>
+            <button class='sidebar-toggle' id ="setting" onclick='toggleSidebar()'>
+                ···
+            </button>
+        </div>
+        <ul class="messages">
+            <!-- 添加隐藏栏 -->
+            <div id = "hbox" class="sidebar">
+                <h2>ChatGpt设置</h2>
+                <form>
+                    <label>开启上下文:&nbsp;</label>
+                    <label class="switch">
+                        <input type="checkbox" id="mySwitch">
+                        <span id = "statusColor" class="slider1 round"></span>
+                    </label>
+                    <br>
+                    <hr class="line"/>
+                    <br>
+                    <label for="key">OpenAiKey：</label>
+                    <input type="text" id="key" name="key" placeholder="openaiKey"><br><br>
+                    <hr class="line"/>
+                    <br>
+                    <div id="select-wrapper">
+                        <label for="preset-text" >预设剧本：</label>
+                    </div>
+                    <div id ="textarea-wrapper"></div>
+                    <br>
+                    <br>
+                    <div>
+                    <label>对话随机度：</label>
+                    <input type="range" min="0" max="1" step="0.01" value="0.0" id="tem_slider">
+                    <label id="rang_label" ></label>
+                    </div>
+                </form>
+                <br>
+                <label> copyright @ 2023 @caomaoboy </label>
+            </div>
+            <div style="text-align: left; color: green " id="chatlogdiv">
+                <pre style="white-space: pre-wrap; word-wrap:break-word" id="chatlog"></pre>
+            </div>
+        </ul>
+        <div class="bottom_wrapper clearfix">
+            <textarea class="message_input_wrapper" placeholder="点击这里输入问题" id="chatinput"></textarea>
+            <button class="send_message" id="sendbutton">提交</button>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="/static/js/script.js"></script>
+</body>
+</html>
