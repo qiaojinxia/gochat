@@ -48,7 +48,7 @@ func gracefulExitServer(server *http.Server) {
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
 	// 接收信号
 	sig := <-ch
-	log.Println("获取一个系统信号", sig)
+	log.Println("get exit single", sig)
 	//关闭所有服务
 	repositories.CloseAllServer()
 	// 设置当前时间
