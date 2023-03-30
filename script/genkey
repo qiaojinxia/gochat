@@ -1,0 +1,63 @@
+    /*
+    *
+    * handsontable 授权码生成
+    * pKey: 自定义key（默认为空，如果传入，将会以此key为基准进行调整）
+    * days： 注册天数，已当前时间为起点
+    * 使用示例：
+    * genKey();//随机生成有效期10天
+    * genKey(null,100);//随机生成有效期100天
+    * genKey("11111-11111-11111-11111-11111",100);//修改为有效key
+    *
+    */
+    function genKey(pKey,days){
+
+        //生成指定长度的随机16进制码
+        let g = function(len,s){
+            s = s || "";
+            let rev = [];
+            for(let i=s.length;i<len;i++){
+                rev.push(Math.floor(Math.random()*16).toString(16))
+            }
+            return s+rev.join("");
+        }
+
+        //校验Key中指定区间字符串，并生成校验码替换
+        let e = function(str,s,len,vlen){
+            let j = "00";
+            let j2 = parseInt(j,16).toString();
+            let j3 = parseInt(str.substr(s,len), 16) + j2.padStart(2, '0');
+            let j4 = parseInt(j3,10);
+            let key = (97 - (j4 % 97) + 1).toString(16).padStart(2, '0');
+            let rev = str.substr(0,len+s) + key + str.substr(s+len+vlen);
+            return rev;
+        }
+
+        //注册天数
+        days = days || 10;
+        pKey = pKey&&pKey.replace(/-/g,'');
+        if(!pKey||pKey.length!==25){
+            pKey=g(25);
+        }
+
+        //生成days天有效期
+        let p = parseInt(pKey.substr(1,1),16);//时间变量（随机）
+        let dayKey = ((p||9)*(days+Math.floor(Date.now()/8.64e7)))
+        .toString(16)
+        .padStart(5,0);//days*p 得出key
+        let pKey = pKey.substr(0,18) + dayKey + pKey.substr(23);//替换Key
+
+        //'\x42\x3C\x48\x34\x50\x2B';//"B<H4P+"; [1,-5,7,-13,15,-22]
+        let i = [1,-5,7,-13,15,-22];
+
+        pKey = e(pKey,0,6,2);//生成0-5位的校验码，并替换6-7位
+        pKey = e(pKey,6,8,2);//生成6-14位的校验码，并替换14-15位
+        pKey = e(pKey,14,9,2);//生成14-23位校验码，并替换23-24位
+
+        return [
+            pKey.substr(0,5),
+            pKey.substr(5,5),
+            pKey.substr(10,5),
+            pKey.substr(15,5),
+            pKey.substr(20,5)
+        ].join("-");
+    }

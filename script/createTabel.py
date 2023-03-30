@@ -1,25 +1,17 @@
 import pandas as pd
-import mysql.connector
+import os
+if __name__ == '__main__':
+    # 导入 Excel 文件
+    df = pd.read_excel('/Users/cboy/goProject/awesomeProject10/gochat/script/goods list.xls')
 
-# 从Excel文件中读取数据
-df = pd.read_excel('path/to/file.xlsx')
+    # 选择需要的列
+    df = df[['发货日期', '公司名称', '金额']]
 
-# 建立与MySQL的连接
-config = {
-    'user': '<username>',
-    'password': '<password>',
-    'host': '<host>',
-    'database': '<database>'
-}
-cnx = mysql.connector.connect(**config)
+    # 计算每年的总金额
+    df['年份'] = df['发货日期'].apply(lambda x: x.year)
+    df = df.groupby(['年份', '公司名称']).sum()
 
-# 创建游标对象
-cursor = cnx.cursor()
-
-# 将数据插入MySQL中
-df.to_sql(con=cnx, name='table_name', if_exists='replace', index=False)
-
-# 提交更改并关闭游标和连接
-cursor.close()
-cnx.commit()
-cnx.close()
+    # 打印结果
+    filepath = '/Users/cboy/goProject/awesomeProject10/gochat/script/result.xls'  # 修改成实际的文件路径
+    new_filepath = os.path.splitext(filepath)[0] + '_汇总.xlsx'
+    df.to_excel(new_filepath)

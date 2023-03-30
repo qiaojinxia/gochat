@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"goChat/controllers"
+	"goChat/middleware"
 	"goChat/repositories"
 	"log"
 	"net/http"
@@ -22,12 +23,17 @@ func main() {
 	//	IPMap: make(map[string]int64),
 	//}
 	//r.Use(rateLimiter.LimitHandler)
+	r.Use(middleware.CorsMiddleware())
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "static/")
+	r.Static("/data", "data/")
 	// 添加 POST /postChatMsg/:username 路由
 	r.POST("/postChatStreamMsg/:token", controllers.PostChatStreamMsgHandler)
 	r.POST("/postChatMsg/:token", controllers.SendMessage)
 	r.GET("/", controllers.Index)
+	r.GET("/downloadExcel/:name", controllers.GetExcel)
+	r.POST("/uploadExcel", controllers.SaveExcel)
+	r.GET("/chatExcel", controllers.Excel)
 	// 写一个服务监听
 	server := &http.Server{
 		Addr:           ":8080",
