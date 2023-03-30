@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>动态创建表格</title>
+<head>
+    <style>
+        /* 全局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+        /* 导航栏样式 */
+        header {
+            height: 60px;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        #outer-container{
+            border: 1px solid #dbdada;
+            box-shadow: 6px 6px 6px #cdcbcb;
+            padding: 10px;
+            border-radius: 8px;
+            width: 80%;
+            margin:0 auto;
+            padding-bottom: 14px;
+
+        }
+        .logo {
+            font-size: 24px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            color: #ff4500;
+        }
+        table{
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid black;
+        }
+        th {
+            background-color: #cdd5e5;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #outer-container{
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            width: 60%;
+            border: 1px solid #ccc; /*添加一个1像素的灰色边框*/
+            box-shadow: 2px 2px 5px #888; /*添加一个2像素的阴影，阴影颜色为深灰色*/
+            font-size: 20px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #38beae;
+        }
+
+        button {
+            padding: 8px 16px 4px 16px;
+            border-radius: 4px;
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            height: 40px;
+        }
+
+        #form-container{
+            position: fixed;
+            bottom: 0;
+            margin-bottom: 20px; /* 为其他元素留出足够的空间 */
+            width: 100%;
+        }
+
+        #list-container{
+
+
+            position: absolute;
+            left: 7%;
+        }
+
+        #list-container ul{
+
+            list-style: none;
+
+        }
+        .page-tag-div {
+            position: relative;
+            width:50px;
+            height: 25px;
+            border: none;
+            padding: 2px;
+            text-align: center;
+            background-color: #F0F0F0;
+            float: left;
+            border-radius: 7px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5); /* 设置边缘阴影 */
+            border: 3px solid #ccc; /*添加一个1像素的灰色边框*/
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+
+<header>
+    <div class="logo">草帽Boy的Logo</div>
+    <nav>
+        <ul>
+            <li><a id= "uploadBtn" href="#">上传</a></li>
+            <li><a id= "downloadBtn" href="#">下载</a></li>
+            <li><a href="#">关于我们</a></li>
+        </ul>
+    </nav>
+
+</header>
+<form>
+    <div id="myForm" action="xxx地址" method="post" enctype="multipart/form-data">
+        <div id="myFile" type="file" name="myFile" style="display:none;">
+        </div>
+    </div>
+
+</form>
+
+
+<div id="outer-container">
+    <div id="table-container"></div>
+    <div id="list-container">
+        <ul id="myList"> </ul>
+    </div>
+</div>
+<div id="form-container" style="text-align:center;">
+    <input type="text" id="post-input" placeholder="Type something...">
+    <button onclick="postData()">Send</button>
+
+</div>
+
+</body>
+<script>
+    // sample data (can be replaced with actual data from server)
+    const data = [
+        {
+            name: 'John',
+            age: 30,
+            email: 'john@example.com'
+        },
+        {
+            name: 'Mary',
+            age: 25,
+            email: 'mary@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        },
+        {
+            name: 'Peter',
+            age: 40,
+            email: 'peter@example.com'
+        },
+        {
+            name: 'Sarah',
+            age: 35,
+            email: 'sarah@example.com'
+        }
+    ];
+
+    // create table header based on object keys in data
+    const keys = Object.keys(data[0]);
+    const headerRow = document.createElement('tr');
+    keys.forEach(key => {
+        const headerCell = document.createElement('th');
+        headerCell.textContent = key;
+        headerRow.appendChild(headerCell);
+    });
+
+    // create table rows based on data
+    const tableBody = document.createElement('tbody');
+    data.forEach(rowData => {
+        const row = document.createElement('tr');
+        keys.forEach(key => {
+            const cell = document.createElement('td');
+            cell.textContent = rowData[key];
+            row.appendChild(cell);
+        });
+        tableBody.appendChild(row);
+    });
+
+    // create table and append to container div
+    const table = document.createElement('table');
+    table.appendChild(headerRow);
+    table.appendChild(tableBody);
+    document.getElementById('table-container').appendChild(table);
+
+
+    // function to handle form submission
+    function postData() {
+        const postContent = document.getElementById("post-input").value;
+        fetch('http://example.com/api/post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                content: postContent
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Post submitted successfully!');
+                document.getElementById("post-input").value = ""; // clear input field
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error submitting post. Please try again later.');
+            });
+    }
+
+    document.querySelector("#uploadBtn").addEventListener("click", function(){
+        // 弹出文件选择框
+        document.querySelector("#myFile").click();
+    });
+
+    // 上传文件
+    document.querySelector("#myFile").addEventListener("change", function(){
+        var file = this.files[0];
+        var formData = new FormData();
+        formData.append("myFile", file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "xxx地址", true);
+        xhr.onload = function(){
+            console.log(xhr.responseText);
+        };
+        xhr.send(formData);
+    });
+
+    // JavaScript 代码中的下载按钮点击事件
+    document.querySelector("#downloadBtn").addEventListener("click", function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "xxx地址", true);
+        xhr.responseType = "blob";
+        xhr.onload = function(){
+            if (xhr.status === 200) {
+                var fileBlob = xhr.response;
+                var a = document.createElement("a");
+                var url = window.URL.createObjectURL(fileBlob);
+                a.href = url;
+                a.download = "myFile.txt";
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+        };
+        xhr.send();
+    });
+
+    let myList = ['表格1','表格2'];
+
+    function addListItem(item) {
+        myList.push(item);
+        refreshList();
+    }
+
+    function removeListItem(index) {
+        myList.splice(index, 1);
+        refreshList();
+    }
+
+    function refreshList() {
+        let list = document.getElementById("myList");
+        list.innerHTML = "";
+        for (let i = 0; i < myList.length; i++) {
+            let pageTagDiv = document.createElement("div");
+            pageTagDiv.className = "page-tag-div";
+            let li = document.createElement("li");
+            li.innerHTML = myList[i];
+            li.className = "list-item";
+            li.onclick = function() { removeListItem(i); };
+            pageTagDiv.appendChild(li);
+            list.appendChild(pageTagDiv);
+        }
+    }
+
+    function highlightListItem(e) {
+        e.target.classList.add("highlight");
+    }
+
+    function unhighlightListItem(e) {
+        e.target.classList.remove("highlight");
+    }
+
+    let list = document.getElementById("list-container");
+
+    list.addEventListener("mouseover", highlightListItem);
+    list.addEventListener("mouseout", unhighlightListItem);
+    refreshList();
+
+
+</script>
+
+</html>
