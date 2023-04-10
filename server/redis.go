@@ -1,30 +1,23 @@
-package repositories
+package server
 
 import (
 	"github.com/gomodule/redigo/redis"
 	"goChat/conf"
-	"sync"
 	"time"
 )
 
 var redisPool *RedisServer
-var initRedis = &sync.Once{}
 
 func GetRedisPool() *redis.Pool {
-	initRedis.Do(func() {
-		server := RedisServer{}
-		server.Init()
-	})
 	return redisPool.pool
 }
-
 
 type RedisServer struct {
 	pool *redis.Pool
 }
 
-func NewRedisServer(pool *redis.Pool) *RedisServer {
-	return &RedisServer{pool: pool}
+func NewRedisServer() *RedisServer {
+	return &RedisServer{}
 }
 
 func (rs *RedisServer) Close() error {
@@ -32,9 +25,8 @@ func (rs *RedisServer) Close() error {
 }
 
 func (rs *RedisServer) Init() error {
-	setDb := redis.DialDatabase(conf.RedisIndex)   //输入数据库序号
-	setPasswd := redis.DialPassword(conf.RedisPwd) //设置密码
-
+	setDb := redis.DialDatabase(conf.GetConfigInt("redis", "redis_index")) //输入数据库序号
+	setPasswd := redis.DialPassword(conf.GetConfig("redis", "pwd"))        //设置密码
 	pool := &redis.Pool{
 		// maximum number of connections allocated by the pool at a given time.
 		// when zero, there is no limit on the number of connections in the pool.
@@ -55,10 +47,9 @@ func (rs *RedisServer) Init() error {
 		// the connection returned from dial must not be in a special state
 		// (subscribed to pubsub channel, transaction started, ...).
 		Dial: func() (redis.Conn, error) {
-			return redis.Dial("tcp", conf.RedisAddr, setDb, setPasswd)
+			return redis.Dial("tcp", conf.GetConfig("redis", "url"), setDb, setPasswd)
 		},
 	}
-	redisPool = NewRedisServer(pool)
-	RegisterServer(redisPool)
+	rs.pool = pool
 	return nil
 }

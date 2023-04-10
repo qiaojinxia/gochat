@@ -1,0 +1,253 @@
+/* 全局样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* 导航栏样式 */
+header {
+    height: 60px;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+#outer-container{
+    border: 1px solid #dbdada;
+    box-shadow: 6px 6px 6px #cdcbcb;
+    border-radius: 8px;
+    width: 90%;
+    margin:0 auto;
+    padding: 10px 10px 14px;
+}
+.logo {
+    font-size: 24px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-right: 20px;
+}
+
+nav ul li:last-child {
+    margin-right: 0;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    color: #ff4500;
+}
+table{
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px;
+    border: 1px solid black;
+}
+th {
+    background-color: #cdd5e5;
+    font-weight: bold;
+    text-align: center;
+}
+
+#outer-container{
+    margin-top: 20px;
+}
+
+input[type="text"] {
+    padding: 8px;
+    border-radius: 4px;
+    width: 60%;
+    border: 1px solid #ccc; /*添加一个1像素的灰色边框*/
+    box-shadow: 2px 2px 5px #888; /*添加一个2像素的阴影，阴影颜色为深灰色*/
+    font-size: 20px;
+}
+
+input[type="text"]:focus {
+    border-color: #38beae;
+}
+
+.active {
+    font-weight: bold;
+    background: rgba(138, 147, 146, 0.5);
+}
+
+button {
+    padding: 8px 16px 4px 16px;
+    border-radius: 4px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    height: 40px;
+}
+
+#form-container{
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px; /* 为其他元素留出足够的空间 */
+    width: 100%;
+}
+
+#list-container{
+    padding: 0;
+}
+
+#list-container ul{
+
+    list-style: none;
+
+}
+.page-tag-div {
+    position: relative;
+    width:50px;
+    height: 25px;
+    padding: 2px;
+    text-align: center;
+    background-color: #F0F0F0;
+    float: left;
+    border-radius: 7px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5); /* 设置边缘阴影 */
+    border: 2px solid #ccc;
+}/*添加一个1像素的灰色边框*/
+
+#overlay {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: fixed;
+    font-size: 50px;
+    color: #1fa758;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+#overlay p {
+    margin: 0;
+}
+
+#hintList{
+    list-style: none;
+
+}
+#myList{
+    padding: 0px;
+}
+.list-item{
+    cursor: pointer;
+    border-radius: 3px;
+}
+.message-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    padding-top: 10px;
+    height: auto;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+}
+
+.message-box .icon {
+    display: inline-block;
+    flex: 0 0 30px;
+    height: 22px;
+    width: 21px;
+    margin-left: 35%;
+    background-image: url('/static/img/283.svg');
+    background-position: center;
+    background-size: contain;
+}
+.message-box .title {
+    display: inline-block;
+    flex: 1;
+    font-size: 20px;
+    text-align: center;
+    height: 20px;
+    margin: 0;
+}
+.message-box div > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.message-box .content {
+    font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
+    padding: 0 20px 30px;
+    margin-top: 30px;
+}
+
+#hintList {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+#hintList li {
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin: 20px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease-out;
+    transform: translateY(0);
+}
+
+#hintList li:hover {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-6px);
+}
+
+#hintList li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            to top right,
+            #008cff,
+            #3f3fff,
+            #b5076b,
+            #f66aa8,
+            #f73c88
+    );
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    z-index: -1;
+    border-radius: 5px;
+}
+
+#hintList li:hover::before {
+    opacity: 1;
+}

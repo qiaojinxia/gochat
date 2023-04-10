@@ -427,13 +427,13 @@ input[type=radio] {
   to {right:0;}
 }
 
-
 .switch {
   position: relative;
   display: inline-block;
   width: 45px;
   height: 25px;
 }
+
 .switch input {
   opacity: 0;
 }

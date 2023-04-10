@@ -14,3 +14,16 @@ To Start Project
 Visit Page : 127.0.0.1:8080
 
 ![image](1678889398862.jpg) 
+
+
+#ChatExcel Use ChatGpt To Handler Excel 
+now only support .xlsx
+
+##Docker构建
+```
+docker build -t myapp .
+docker run -p 8080:8080 myapp
+```
+
+访问地址 :http://localhost:8080/
+

@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// 定义聊天消息结构体
+//ChatMessage 定义聊天消息结构体
 type ChatMessage struct {
 	Message       string `json:"msg"`
 	IsOpenContext string `json:"isOpenContext"`

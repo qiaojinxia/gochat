@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"goChat/conf"
 	"goChat/controllers"
 	"goChat/middleware"
-	"goChat/repositories"
+	"goChat/server"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +17,8 @@ import (
 )
 
 func main() {
+	conf.InitGlobalConfig("config.ini")
+	server.InitServers()
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	//rateLimiter := &middleware.RateLimiter{
@@ -34,9 +38,12 @@ func main() {
 	r.GET("/downloadExcel/:name", controllers.GetExcel)
 	r.POST("/uploadExcel", controllers.SaveExcel)
 	r.GET("/chatExcel", controllers.Excel)
+	r.POST("/chatOptExcel", controllers.ChatExcelGenerate)
+	r.GET("/chatExcel/about", controllers.ChatExcelAbout)
+	r.GET("/chatExcel/tutorial", controllers.Tutorial)
 	// 写一个服务监听
 	server := &http.Server{
-		Addr:           ":8080",
+		Addr:           fmt.Sprintf(":%s", conf.GetConfig("gin", "port")),
 		Handler:        r,
 		ReadTimeout:    5 * 60 * time.Second,
 		WriteTimeout:   5 * 60 * time.Second,
@@ -48,7 +55,7 @@ func main() {
 	gracefulExitServer(server)
 }
 
-func gracefulExitServer(server *http.Server) {
+func gracefulExitServer(h *http.Server) {
 	// 使用缓存的channel；建议用1；详情看Uber Go style；其他情况酌情使用缓冲大小
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
@@ -56,14 +63,14 @@ func gracefulExitServer(server *http.Server) {
 	sig := <-ch
 	log.Println("get exit single", sig)
 	//关闭所有服务
-	repositories.CloseAllServer()
+	server.CloseAllServer()
 	// 设置当前时间
 	nowTime := time.Now()
 	// 设置为5秒超时
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	// 最后关闭
 	defer cancel()
-	err := server.Shutdown(ctx)
+	err := h.Shutdown(ctx)
 	if err != nil {
 		log.Println("err", err)
 	}

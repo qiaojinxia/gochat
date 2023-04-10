@@ -2,147 +2,19 @@
 <html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>动态创建表格</title>
+<title>ChatExcel AI表格自动处理工具</title>
 
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
-    <style>
-        /* 全局样式 */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-        }
+    <link rel="stylesheet" href="/static/css/handsontable.full.min.css">
 
-        /* 导航栏样式 */
-        header {
-            height: 60px;
-            background-color: #333;
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        #outer-container{
-            border: 1px solid #dbdada;
-            box-shadow: 6px 6px 6px #cdcbcb;
-            padding: 10px;
-            border-radius: 8px;
-            width: 80%;
-            margin:0 auto;
-            padding-bottom: 14px;
-
-        }
-        .logo {
-            font-size: 24px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav ul li {
-            margin-right: 20px;
-        }
-
-        nav ul li:last-child {
-            margin-right: 0;
-        }
-
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        nav ul li a:hover {
-            color: #ff4500;
-        }
-        table{
-            width: 100%;
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid black;
-        }
-        th {
-            background-color: #cdd5e5;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        #outer-container{
-            margin-top: 20px;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            border-radius: 4px;
-            width: 60%;
-            border: 1px solid #ccc; /*添加一个1像素的灰色边框*/
-            box-shadow: 2px 2px 5px #888; /*添加一个2像素的阴影，阴影颜色为深灰色*/
-            font-size: 20px;
-        }
-
-        input[type="text"]:focus {
-            border-color: #38beae;
-        }
-
-        button {
-            padding: 8px 16px 4px 16px;
-            border-radius: 4px;
-            border: none;
-            background-color: #4caf50;
-            color: white;
-            cursor: pointer;
-            height: 40px;
-        }
-
-        #form-container{
-            position: fixed;
-            bottom: 0;
-            margin-bottom: 20px; /* 为其他元素留出足够的空间 */
-            width: 100%;
-        }
-
-        #list-container{
-
-
-            position: absolute;
-            left: 7%;
-        }
-
-        #list-container ul{
-
-            list-style: none;
-
-        }
-        .page-tag-div {
-            position: relative;
-            width:50px;
-            height: 25px;
-            border: none;
-            padding: 2px;
-            text-align: center;
-            background-color: #F0F0F0;
-            float: left;
-            border-radius: 7px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5); /* 设置边缘阴影 */
-            border: 3px solid #ccc; /*添加一个1像素的灰色边框*/
-        }
-
-    </style>
+    <link rel="stylesheet" href="/static/css/excel.css">
+    <title></title>
 </head>
 <body>
 
+<div id="message-box">
+    <div id="message-text"></div>
+</div>
 
 <header>
     <div class="logo">草帽Boy的Logo</div>
@@ -150,11 +22,21 @@
         <ul>
             <li><a id= "uploadBtn" href="#">上传</a></li>
             <li><a id= "downloadBtn" href="#">下载</a></li>
-            <li><a href="#">关于我们</a></li>
+            <li><a  href="/chatExcel/tutorial" >使用教程</a></li>
+            <li><a href="/chatExcel/about">关于caoMaoBoy</a></li>
+
         </ul>
     </nav>
 
 </header>
+
+<div class="message-box">
+    <div>
+        <div class="icon"></div>
+        <div class="title">提示</div>
+    </div>
+    <div class="content"></div>
+</div>
 
 <form>
     <div id="myForm" action="/uploadExcel" method="post" enctype="multipart/form-data">
@@ -163,45 +45,132 @@
 </form>
 
 <div id="outer-container">
-    <div id="myTable"></div>
+    <div id="myTable">
+        <div id="overlay">Loading...</div>
+    </div>
     <div id="list-container">
         <ul id="myList"> </ul>
     </div>
 </div>
+
 <div id="form-container" style="text-align:center;">
-    <input type="text" id="post-input" placeholder="Type something...">
-    <button onclick="postData()">Send</button>
+    <ul id="hintList" ></ul>
+    <label for="post-input"></label>
+    <input type="text" id="post-input"  onkeyup="inputHint(this)" placeholder="Type something..." >
+    <button onclick="HandlerInputMsg()">Send</button>
 
 </div>
 
 </body>
-<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
-<script  src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script  src="/static/js/trieNode.js"></script>
+<script  src="/static/js/table_callback.js"></script>
+<script src="/static/js/handsontable.full.min.js"></script>
+<script  src="/static/js/xlsx.full.min.js"></script>
 <script  src="/static/js/table.js"></script>
-
+<script  src="/static/js/codeAnalysis.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-    const tableList = new Map();
+    let tableList = new Map();
+    let trie = new Trie();
+
+    let command_trie = new Trie();
+    command_trie.addWord("del");
+    command_trie.addWord("op");
+
+    let curSelectTablesName = ''; //当前高亮的选中表格
+
+    function HandlerInputMsg() {
+        let postContent = document.getElementById("post-input").value;
+        let result = InputAnalysis(postContent);
+
+        switch (result[0]) {
+            case 'op':
+                postData(result[1],result[2]);
+                break;
+            case 'del':
+                result[1].forEach(function(table_name) {
+                    DelTable(table_name);
+                    refreshList();
+                });
+                break;
+        }
+    }
+    function showMessage(content) {
+        $('.overlay').fadeIn();
+        $('.message-box .content').text(content);
+        $('.message-box').fadeIn();
+
+        setTimeout(function() {
+            $('.overlay').fadeOut();
+            $('.message-box').fadeOut();
+        }, 3000)
+    }
+    function inputHint(input) {
+        const hintList = document.getElementById('hintList');
+        hintList.innerHTML = ''; // 清空提示列表
+
+        const inputValue = input.value.toLowerCase();
+        if (!inputValue) {
+            return; // 输入框没有输入内容直接返回
+        }
+        let result = InputAnalysis(inputValue);
+        let matchedHints = [];
+        if (result[3] === "command"){
+            matchedHints = command_trie.autoComplete(result[0])
+        }else if(result[3] === "objects"){
+            let arr = trie.autoComplete("表");
+            matchedHints = arr.filter(num => ! result[1].slice(0, result[1].length - 1).includes(num));
+        }
+        if (matchedHints.length === 0) {
+            return; // 没有匹配的提示直接返回
+        }
+
+        matchedHints.forEach(hint => { // 将匹配的提示添加到列表中
+            const li = document.createElement('li');
+            li.innerText = hint;
+            li.addEventListener("click", function() {
+                const postInput = document.getElementById('post-input');
+                postInput.value += li.innerText;
+            });
+            hintList.appendChild(li);
+        });
+    }
+
+
     // function to handle form submission
-    function postData() {
-        const postContent = document.getElementById("post-input").value;
-        fetch('http://example.com/api/post', {
+    function postData(table_slice,text_command) {
+        loading();
+        let op_tables = {};
+        table_slice.forEach(function(table_name) {
+            let url_path = tableList.get(table_name);
+            op_tables[url_path] = GetSheetHeader(url_path);
+        });
+
+        fetch('/chatOptExcel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                content: postContent
+                op_tables: op_tables,
+                text_command: text_command,
             })
         })
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('Post submitted successfully!');
-                document.getElementById("post-input").value = ""; // clear input field
+                if (data.filename){
+                    addListItem(data.filename);
+                    showExcelData('/downloadExcel/' + data.filename,data.filename);
+                    document.getElementById("post-input").value = ""; // clear input field
+                }else if(data.error){
+                    showMessage(data.error)
+                }
+                finish();
             })
             .catch((error) => {
-                console.error('Error:', error);
-                alert('Error submitting post. Please try again later.');
+                showMessage(error)
+                finish();
             });
     }
 
@@ -213,98 +182,150 @@
     // 上传文件
     document.getElementById("myFile").onchange = function() {
         if(window.FormData) {
-            let formData = new FormData();
-            // 建立一个upload表单项，值为上传的文件
-            formData.append('uploadFile', document.getElementById('myFile').files[0]);
-            let xhr = new XMLHttpRequest();
-            document.getElementById("myForm")
-            let form = document.getElementById("myForm");
-            let formUrl = form.getAttribute("action");
-            xhr.open('POST', formUrl);
-            // 定义上传完成后的回调函数
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    const respObj = JSON.parse(xhr.response);
-                    console.log('上传成功 保存文件名:',respObj.filename);
-                    addListItem(respObj.filename);
-                    showExcelData('/downloadExcel/' + respObj.filename);
-                } else {
-                    console.log('出错了');
-                }
-            };
-            xhr.send(formData);
+            sendMsg(false);
         }
     };
 
     // JavaScript 代码中的下载按钮点击事件
     document.querySelector("#downloadBtn").addEventListener("click", function(){
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "xxx地址", true);
-        xhr.responseType = "blob";
-        xhr.onload = function(){
-            if (xhr.status === 200) {
-                let fileBlob = xhr.response;
-                let a = document.createElement("a");
-                let url = window.URL.createObjectURL(fileBlob);
-                a.href = url;
-                a.download = "myFile.txt";
-                a.click();
-                window.URL.revokeObjectURL(url);
-            }
-        };
-        xhr.send();
+        let file_data = GetSheetOriginData(curSelectTablesName);
+        const blob = new Blob([file_data], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", curSelectTablesName);
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+
     });
 
-
-    function addKeyValueToMap(map, valueToAdd){
-        const key = '表格' + (Object.keys(map).length + 1);
-        map[key] = valueToAdd;
-        return map;
+    function sendMsg(update) {
+        let formData = new FormData();
+        // 建立一个upload表单项，值为上传的文件
+        if (needUploadFile){
+            formData.append('uploadFile', needUploadFile);
+        }else{
+            formData.append('uploadFile', document.getElementById('myFile').files[0]);
+        }
+        let fileFormat =  document.getElementById('myFile').files[0].name.split('.').pop();
+        if (fileFormat !== 'xlsx') {
+            showMessage("now only support .xlsx file");
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        document.getElementById("myForm")
+        let form = document.getElementById("myForm");
+        let formUrl = form.getAttribute("action");
+        if (update){
+            formUrl = "/uploadExcel?file_name=" + curSelectTablesName
+        }
+        xhr.open('POST', formUrl);
+        // 定义上传完成后的回调函数
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                const respObj = JSON.parse(xhr.response);
+                console.log('上传成功 保存文件名:',respObj.filename);
+                addListItem(respObj.filename);
+                showExcelData('/downloadExcel/' + respObj.filename,respObj.filename);
+            } else {
+                showMessage("uploadExcel error")
+            }
+        };
+        xhr.send(formData);
+    }
+    function addKeyValueToMap(valueToAdd){
+        let ok = false;
+        tableList.forEach((value, key) => {
+            if (value === valueToAdd){
+                tableList.set(key, valueToAdd)
+                ok = true;
+            }
+        });
+        if (ok) return;
+        const key = '表格' + (tableList.size + 1);
+        trie.addWord(key);
+        tableList.set(key, valueToAdd);
     }
 
-    // 初始化页面，展示默认的Excel文件解析结果
-    // showExcelData('localhost:8080/downloadExcel/' + '123');
+    function setCurSelect(filename){
+        curSelectTablesName =  filename
+    }
+
+    function DelTable(name){
+        trie.delete(name);
+        tableList.delete(name);
+    }
+    function loading(){
+        document.getElementById("overlay").style.display = "flex";
+    }
+
+    function finish(){
+        document.getElementById("overlay").style.display = "none";
+    }
 
     function addListItem(item) {
-        addKeyValueToMap(tableList,item)
+        addKeyValueToMap(item)
         refreshList();
     }
 
-    function removeListItem(index) {
-        tableList.splice(index, 1);
+    function removeListItem(key) {
+        tableList.delete(key);
         refreshList();
+    }
+
+    function changeListItem(key) {
+        showExcelData('/downloadExcel/' + key,key);
     }
 
     function refreshList() {
         let list = document.getElementById("myList");
         list.innerHTML = "";
-        for (let i = 0; i < myList.length; i++) {
+        console.log(tableList.size); // output: 2
+        if (tableList.size === 0){
+            clearDataToTable();
+        }
+        tableList.forEach((value, key) => {
+            console.log(key,value);
             let pageTagDiv = document.createElement("div");
             pageTagDiv.className = "page-tag-div";
             let li = document.createElement("li");
-            li.innerHTML = myList[i];
+            li.innerHTML = key;
             li.className = "list-item";
-            li.onclick = function() { removeListItem(i); };
+            li.onclick = function() {
+                console.log("123")
+                // 移除所有列表项的选中样式
+                document.querySelectorAll(".list-item").forEach(item => item.classList.remove("active"));
+                // 为当前选中的列表项添加选中样式
+                event.target.classList.add("active");
+                changeListItem(value);
+            };
             pageTagDiv.appendChild(li);
             list.appendChild(pageTagDiv);
-        }
+        });
     }
 
+
+    let list = document.getElementById("list-container");
     function highlightListItem(e) {
         e.target.classList.add("highlight");
     }
-
-    function unhighlightListItem(e) {
+    function unHighlightListItem(e) {
         e.target.classList.remove("highlight");
     }
 
-    let list = document.getElementById("list-container");
-
     list.addEventListener("mouseover", highlightListItem);
-    list.addEventListener("mouseout", unhighlightListItem);
-    refreshList();
+    list.addEventListener("mouseout", unHighlightListItem);
 
-
+    window.addEventListener('load', function() {
+        let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        // 将浏览器高度应用于具有 id "outer-container" 的元素
+        document.getElementById("outer-container").style.height = windowHeight * 0.77 + "px";
+    });
 </script>
 
 </html>

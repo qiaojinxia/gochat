@@ -3,8 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"goChat/repositories"
-
+	"goChat/server"
 	"sort"
 	"strconv"
 )
@@ -17,7 +16,7 @@ func GetChatGptUserCountKey(token string) string {
 }
 
 func SetUserChatContext(token string, context string) error {
-	pool := repositories.GetRedisPool()
+	pool := server.GetRedisPool()
 	conn := pool.Get()
 	ct, err := redis.Int(conn.Do("INCR", GetChatGptUserCountKey(token)))
 	if err != nil {
@@ -32,7 +31,7 @@ func SetUserChatContext(token string, context string) error {
 }
 
 func GetUserChatContext(token string) ([]string, error) {
-	pool := repositories.GetRedisPool()
+	pool := server.GetRedisPool()
 	conn := pool.Get()
 	data, err := redis.StringMap(conn.Do("HGETALL", GetChatGptUserKey(token)))
 	if err != nil {

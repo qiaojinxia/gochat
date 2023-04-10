@@ -1,9 +1,10 @@
 module goChat
 
-go 1.18
+go 1.17
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
+	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gomodule/redigo v1.8.9
 	github.com/sashabaranov/go-openai v1.5.0
